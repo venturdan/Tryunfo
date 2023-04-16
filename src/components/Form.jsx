@@ -12,10 +12,6 @@ function Form() {
 
   function handleSubmit(event) {
     event.preventDefault();
-
-    // Aqui você pode adicionar a lógica de envio do formulário, como enviar os dados para um servidor ou armazená-los em um estado global.
-
-    // Após o envio, é comum limpar os campos do formulário para que o usuário possa adicionar uma nova carta
     setName('');
     setDescription('');
     setAttr1(0);
