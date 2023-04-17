@@ -15,7 +15,7 @@ function Form({
   onInputChange,
   onSaveButtonClick,
 }) {
-  const [, setName] = useState(cardName || '');
+  const [name, setName] = useState(cardName || '');
   const [description, setDescription] = useState(cardDescription || '');
   const [attr1, setAttr1] = useState(cardAttr1 || 0);
   const [attr2, setAttr2] = useState(cardAttr2 || 0);
@@ -25,7 +25,7 @@ function Form({
   const [trunfo, setTrunfo] = useState(cardTrunfo || false);
 
   const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target;
+    const { value, type, checked } = event.target;
     const newValue = type === 'checkbox' ? checked : value;
     switch (name) {
     case 'name':
@@ -61,7 +61,14 @@ function Form({
 
   function handleSubmit(event) {
     event.preventDefault();
-    onSaveButtonClick({ name, description, attr1, attr2, attr3, image, rare, trunfo });
+    onSaveButtonClick({ cardName,
+      description,
+      attr1,
+      attr2,
+      attr3,
+      image,
+      rare,
+      trunfo });
   }
 
   return (
@@ -73,7 +80,7 @@ function Form({
         name="name"
         data-testid="name-input"
         required
-        value={ name }
+        value={ cardName }
         onChange={ handleInputChange }
       />
 
