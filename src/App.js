@@ -6,14 +6,15 @@ class App extends Component {
   state = {
     cardName: '',
     cardDescription: '',
-    cardAttr1: '',
-    cardAttr2: '',
-    cardAttr3: '',
+    cardAttr1: 0,
+    cardAttr2: 0,
+    cardAttr3: 0,
     cardImage: '',
-    cardRare: '',
+    cardRare: 'normal',
     cardTrunfo: false,
     hasTrunfo: false,
     isSaveButtonDisabled: true,
+    cards: [],
   };
 
   handlesValidation = () => {
@@ -41,15 +42,19 @@ class App extends Component {
     this.setState({ isSaveButtonDisabled: !(validInputs && validAttr) });
   };
 
-  onInputChange = ({ target: { name, value } }) => {
-    this.setState({ [name]: value }, this.handlesValidation);
+  handleInputChange = (event) => {
+    const { name, value, type, checked } = event.target;
+
+    if (type === 'checkbox') {
+      this.setState({ [name]: checked }, this.handlesValidation);
+    } else {
+      this.setState({ [name]: value }, this.handlesValidation);
+    }
   };
 
-  onSaveButtonClick = ({ target: { name, value } }) => {
-    this.setState({ [name]: value });
-  };
+  handleSaveButtonClick = (event) => {
+    event.preventDefault();
 
-  render() {
     const {
       cardName,
       cardDescription,
@@ -61,13 +66,51 @@ class App extends Component {
       cardTrunfo,
     } = this.state;
 
+    const newCard = {
+      name: cardName,
+      description: cardDescription,
+      attr1: +cardAttr1,
+      attr2: +cardAttr2,
+      attr3: +cardAttr3,
+      image: cardImage,
+      rare: cardRare,
+      trunfo: cardTrunfo,
+    };
+
+    this.setState((prevState) => ({ cards: [...prevState.cards, newCard] }));
+
+    this.setState({
+      cardName: '',
+      cardDescription: '',
+      cardAttr1: 0,
+      cardAttr2: 0,
+      cardAttr3: 0,
+      cardImage: '',
+      cardRare: 'normal',
+      cardTrunfo: false,
+      isSaveButtonDisabled: true,
+    });
+  };
+
+  render() {
+    const { cardName, cardDescription, cardAttr1, cardAttr2, cardAttr3, cardImage,
+      cardRare, cardTrunfo, hasTrunfo, isSaveButtonDisabled } = this.state;
+
     return (
       <>
-        <h1>Tryunfo</h1>
         <Form
-          onInputChange={ this.onInputChange }
-          onSaveButtonClick={ this.onSaveButtonClick }
-          { ...this.state }
+          cardName={ cardName }
+          cardDescription={ cardDescription }
+          cardAttr1={ cardAttr1 }
+          cardAttr2={ cardAttr2 }
+          cardAttr3={ cardAttr3 }
+          cardImage={ cardImage }
+          cardRare={ cardRare }
+          cardTrunfo={ cardTrunfo }
+          hasTrunfo={ hasTrunfo }
+          isSaveButtonDisabled={ isSaveButtonDisabled }
+          onInputChange={ this.handleInputChange }
+          onSaveButtonClick={ this.handleSaveButtonClick }
         />
         <Card
           cardName={ cardName }
