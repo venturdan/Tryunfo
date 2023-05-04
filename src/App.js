@@ -12,7 +12,6 @@ class App extends Component {
     cardImage: '',
     cardRare: 'normal',
     cardTrunfo: false,
-    hasTrunfo: false,
     isSaveButtonDisabled: true,
     cards: [],
   };
@@ -87,7 +86,8 @@ class App extends Component {
       cardAttr3: 0,
       cardImage: '',
       cardRare: 'normal',
-      cardTrunfo: false,
+      cardTrunfo: '',
+      hasTrunfo: newCard.trunfo,
       isSaveButtonDisabled: true,
     });
   };

@@ -107,9 +107,10 @@ class Form extends Component {
           </div>
         )}
 
-        {hasTrunfo && <p>Você já tem um Super Trunfo em seu baralho.</p>}
+        {hasTrunfo && <p>Você já tem um Super Trunfo em seu baralho</p>}
 
         <button
+          id="save-btn"
           type="submit"
           data-testid="save-button"
           disabled={ isSaveButtonDisabled }

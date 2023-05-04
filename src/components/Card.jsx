@@ -2,7 +2,7 @@ import React from 'react';
 import Proptypes from 'prop-types';
 
 function Card({ cardName, cardDescription, cardAttr1,
-  cardAttr2, cardAttr3, cardImage, cardRare, cardTrunfo }) {
+  cardAttr2, cardAttr3, cardImage, cardRare, cardTrunfo, onDeleteButtonClick }) {
   return (
     <div>
       <h2 data-testid="name-card">{cardName}</h2>
@@ -13,6 +13,7 @@ function Card({ cardName, cardDescription, cardAttr1,
       <p data-testid="attr3-card">{cardAttr3}</p>
       <p data-testid="rare-card">{cardRare}</p>
       {cardTrunfo && <p data-testid="trunfo-card">Super Trunfo</p>}
+      <button data-testid="delete-button" onClick={ onDeleteButtonClick }>Excluir</button>
     </div>
   );
 }
