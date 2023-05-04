@@ -16,6 +16,9 @@ class Form extends Component {
       isSaveButtonDisabled,
       onInputChange,
       onSaveButtonClick,
+      nameFilter,
+      filterChange,
+      rareFilter,
     } = this.props;
 
     return (
@@ -119,6 +122,28 @@ class Form extends Component {
           Salvar
 
         </button>
+        <div>
+          <label htmlFor="name-filter">Filtrar por nome:</label>
+          <input
+            type="text"
+            id="name-filter"
+            name="nameFilter"
+            value={ nameFilter }
+            onChange={ filterChange }
+            data-testid="name-filter"
+          />
+          <select
+            data-testid="rare-filter"
+            value={ rareFilter }
+            name="rareFilter"
+            onChange={ filterChange }
+          >
+            <option>todas</option>
+            <option>normal</option>
+            <option>raro</option>
+            <option>muito raro</option>
+          </select>
+        </div>
       </form>
     );
   }
@@ -136,6 +161,7 @@ Form.propTypes = {
   isSaveButtonDisabled: Proptypes.bool,
   onInputChange: Proptypes.func,
   onSaveButtonClick: Proptypes.func,
+  filterChange: Proptypes.func,
 }.isRequired;
 
 export default Form;

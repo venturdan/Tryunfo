@@ -1,60 +1,25 @@
-import React, { Component } from 'react';
-import Form from './components/Form';
+import React from 'react';
 import Card from './components/Card';
+import Form from './components/Form';
 
-class App extends Component {
+class App extends React.Component {
   state = {
     cardName: '',
     cardDescription: '',
-    cardAttr1: 0,
-    cardAttr2: 0,
-    cardAttr3: 0,
+    cardAttr1: '',
+    cardAttr2: '',
+    cardAttr3: '',
     cardImage: '',
     cardRare: 'normal',
     cardTrunfo: false,
-    hasTrunfo: '',
     isSaveButtonDisabled: true,
+    hasTrunfo: false,
     localCards: [],
+    nameFilter: '',
+    rareFilter: 'todas',
   };
 
-  handlesValidation = () => {
-    const {
-      cardName,
-      cardDescription,
-      cardAttr1,
-      cardAttr2,
-      cardAttr3,
-      cardImage,
-    } = this.state;
-
-    const validInputs = cardName && cardDescription && cardImage;
-    const sum = Number(cardAttr1) + Number(cardAttr2) + Number(cardAttr3);
-    const validSum = 210;
-    const maxPoints = 90;
-    const validAttr = sum <= validSum
-      && cardAttr1 >= 0
-      && cardAttr2 >= 0
-      && cardAttr3 >= 0
-      && cardAttr1 <= maxPoints
-      && cardAttr2 <= maxPoints
-      && cardAttr3 <= maxPoints;
-
-    this.setState({ isSaveButtonDisabled: !(validInputs && validAttr) });
-  };
-
-  handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target;
-
-    if (type === 'checkbox') {
-      this.setState({ [name]: checked }, this.handlesValidation);
-    } else {
-      this.setState({ [name]: value }, this.handlesValidation);
-    }
-  };
-
-  handleSaveButtonClick = (event) => {
-    event.preventDefault();
-
+  handleSaveButtonClick = () => {
     const {
       cardName,
       cardDescription,
@@ -64,21 +29,24 @@ class App extends Component {
       cardImage,
       cardRare,
       cardTrunfo,
+      localCards,
+      hasTrunfo,
     } = this.state;
 
-    const newestCard = { cardName,
-      cardDescription,
-      cardAttr1,
-      cardAttr2,
-      cardAttr3,
-      cardImage,
-      cardRare,
+    const newCard = {
+      name: cardName,
+      description: cardDescription,
+      attr1: cardAttr1,
+      attr2: cardAttr2,
+      attr3: cardAttr3,
+      image: cardImage,
+      rare: cardRare,
       trunfo: cardTrunfo,
+      hasTrunfo: false,
     };
 
-    this.setState((prevState) => ({ localCards: [...prevState.localCards, newestCard] }));
-
     this.setState({
+      localCards: [...localCards, newCard],
       cardName: '',
       cardDescription: '',
       cardAttr1: 0,
@@ -86,15 +54,79 @@ class App extends Component {
       cardAttr3: 0,
       cardImage: '',
       cardRare: 'normal',
-      cardTrunfo: '',
-      hasTrunfo: newestCard.trunfo,
+      cardTrunfo: false,
       isSaveButtonDisabled: true,
+      hasTrunfo: cardTrunfo ? true : hasTrunfo,
     });
   };
 
+  deleteCard = (name) => {
+    const { localCards, hasTrunfo } = this.state;
+    const validHastrunfo = !hasTrunfo;
+    const cardRemove = localCards.filter((card) => card.name !== name);
+    this.setState({
+      localCards: cardRemove,
+      hasTrunfo: validHastrunfo,
+    });
+  };
+
+  filterChange = (event) => {
+    const { value, name } = event.target;
+    this.setState({ [name]: value });
+  };
+
+  handleInputChange = ({ target }) => {
+    const { name } = target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    this.setState(
+      {
+        [name]: value,
+      },
+      () => {
+        const { cardName,
+          cardDescription,
+          cardAttr1,
+          cardAttr2,
+          cardAttr3,
+          cardImage,
+        } = this.state;
+        const maxnum = 90;
+        const maxsum = 210;
+        const att = cardAttr1 >= 0
+        && cardAttr1 <= maxnum
+        && cardAttr2 >= 0
+        && cardAttr2 <= maxnum
+        && cardAttr3 >= 0
+        && cardAttr3 <= maxnum;
+        const sum = Number(cardAttr1) + Number(cardAttr2) + Number(cardAttr3) <= maxsum;
+        const isSaveButtonDisabled = !(cardName.length > 0
+          && cardDescription.length > 0
+          && cardImage.length > 0
+          && att
+          && sum);
+        this.setState({
+          isSaveButtonDisabled,
+        });
+      },
+    );
+  };
+
   render() {
-    const { cardName, cardDescription, cardAttr1, cardAttr2, cardAttr3, cardImage,
-      cardRare, cardTrunfo, hasTrunfo, isSaveButtonDisabled, localCards } = this.state;
+    const {
+      cardName,
+      cardDescription,
+      cardAttr1,
+      cardAttr2,
+      cardAttr3,
+      cardImage,
+      cardRare,
+      cardTrunfo,
+      isSaveButtonDisabled,
+      hasTrunfo,
+      localCards,
+      nameFilter,
+      rareFilter,
+    } = this.state;
 
     return (
       <>
@@ -108,9 +140,11 @@ class App extends Component {
           cardRare={ cardRare }
           cardTrunfo={ cardTrunfo }
           hasTrunfo={ hasTrunfo }
-          isSaveButtonDisabled={ isSaveButtonDisabled }
+          localCards={ localCards }
           onInputChange={ this.handleInputChange }
+          isSaveButtonDisabled={ isSaveButtonDisabled }
           onSaveButtonClick={ this.handleSaveButtonClick }
+          filterChange={ (event) => this.filterChange(event) }
         />
         <Card
           cardName={ cardName }
@@ -122,18 +156,35 @@ class App extends Component {
           cardRare={ cardRare }
           cardTrunfo={ cardTrunfo }
         />
-        {
-          localCards.map((card) => (
-            <Card
-              key={ card.cardName }
-              { ...this.state }
-              { ...card }
-            />
-          ))
-        }
+        <section className="card-list">
+          {localCards
+            .filter((card) => card.name.includes(nameFilter)
+    && (rareFilter === 'todas' || card.rare === rareFilter))
+            .map((card) => (
+              <div key={ card.name }>
+                <Card
+                  cardName={ card.name }
+                  cardDescription={ card.description }
+                  cardAttr1={ card.attr1 }
+                  cardAttr2={ card.attr2 }
+                  cardAttr3={ card.attr3 }
+                  cardImage={ card.image }
+                  cardRare={ card.rare }
+                  cardTrunfo={ card.trunfo }
+                  deleteCard={ this.deleteCard }
+                />
+                <button
+                  onClick={ () => this.deleteCard(card.name) }
+                  data-testid="delete-button"
+                >
+                  Excluir
+                </button>
+              </div>
+            ))}
+        </section>
       </>
     );
   }
 }
-// evaluator bugado
+
 export default App;
