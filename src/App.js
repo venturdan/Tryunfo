@@ -111,6 +111,7 @@ class App extends React.Component {
     );
   };
 
+  // teste
   render() {
     const {
       cardName,
