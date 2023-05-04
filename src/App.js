@@ -12,8 +12,9 @@ class App extends Component {
     cardImage: '',
     cardRare: 'normal',
     cardTrunfo: false,
+    hasTrunfo: '',
     isSaveButtonDisabled: true,
-    cards: [],
+    localCards: [],
   };
 
   handlesValidation = () => {
@@ -65,18 +66,17 @@ class App extends Component {
       cardTrunfo,
     } = this.state;
 
-    const newCard = {
-      name: cardName,
-      description: cardDescription,
-      attr1: +cardAttr1,
-      attr2: +cardAttr2,
-      attr3: +cardAttr3,
-      image: cardImage,
-      rare: cardRare,
+    const newestCard = { cardName,
+      cardDescription,
+      cardAttr1,
+      cardAttr2,
+      cardAttr3,
+      cardImage,
+      cardRare,
       trunfo: cardTrunfo,
     };
 
-    this.setState((prevState) => ({ cards: [...prevState.cards, newCard] }));
+    this.setState((prevState) => ({ localCards: [...prevState.localCards, newestCard] }));
 
     this.setState({
       cardName: '',
@@ -87,14 +87,14 @@ class App extends Component {
       cardImage: '',
       cardRare: 'normal',
       cardTrunfo: '',
-      hasTrunfo: newCard.trunfo,
+      hasTrunfo: newestCard.trunfo,
       isSaveButtonDisabled: true,
     });
   };
 
   render() {
     const { cardName, cardDescription, cardAttr1, cardAttr2, cardAttr3, cardImage,
-      cardRare, cardTrunfo, hasTrunfo, isSaveButtonDisabled } = this.state;
+      cardRare, cardTrunfo, hasTrunfo, isSaveButtonDisabled, localCards } = this.state;
 
     return (
       <>
@@ -122,6 +122,15 @@ class App extends Component {
           cardRare={ cardRare }
           cardTrunfo={ cardTrunfo }
         />
+        {
+          localCards.map((card) => (
+            <Card
+              key={ card.cardName }
+              { ...this.state }
+              { ...card }
+            />
+          ))
+        }
       </>
     );
   }
